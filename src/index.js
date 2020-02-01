@@ -1,4 +1,7 @@
 import _ from 'lodash'
+import Lion2 from './utilities'
+
+console.log(Lion2.say())
 
 function component() {
   const element = document.createElement('div');
