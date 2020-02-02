@@ -1,68 +1,74 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const miniCssExtractPlugin = require('mini-css-extract-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
-const outputPath = path.resolve(__dirname, 'dist')
+const outputPath = path.resolve(__dirname, 'dist');
 
 module.exports = {
   entry: './src/index.js',
   output: {
     filename: 'main.js',
-    path: outputPath
+    path: outputPath,
   },
   module: {
     rules: [
-      { 
-        test: /\.jsx?$/, 
-        exclude: /node_modules/, 
-        loader: "babel-loader" 
+      {
+        enforce: 'pre',
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        loader: 'eslint-loader',
+      },
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader',
       },
       {
         test: /\.(sc|c)ss$/,
-        use:[
-          miniCssExtractPlugin.loader,
+        use: [
+          MiniCssExtractPlugin.loader,
           'css-loader',
-          'sass-loader'
-        ]
+          'sass-loader',
+        ],
       },
       {
         test: /\.(jpe?g|png|gif|svg|ico)$/i,
         loader: 'url-loader',
         options: {
           limit: 2048,
-          name: './images/[name].[ext]'
-        }
+          name: './images/[name].[ext]',
+        },
       },
       {
         test: /\.html/,
-        loader: 'html-loader'
-      }
-    ]
+        loader: 'html-loader',
+      },
+    ],
   },
   devServer: {
-    contentBase: outputPath
+    contentBase: outputPath,
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.html',
-      filename: './index.html'
+      filename: './index.html',
     }),
-    new miniCssExtractPlugin({
-      filename: '[name].[hash].css'
-    })
+    new MiniCssExtractPlugin({
+      filename: '[name].[hash].css',
+    }),
   ],
   optimization: {
     minimizer: [new UglifyJsPlugin({
       uglifyOptions: {
         compress: {
-          drop_console: true
-        }
-      }
+          drop_console: true,
+        },
+      },
     }),
-    new OptimizeCSSAssetsPlugin({})
-    ]
+    new OptimizeCSSAssetsPlugin({}),
+    ],
   },
-  devtool: 'eval-source-map'
-}
+  devtool: 'eval-source-map',
+};
